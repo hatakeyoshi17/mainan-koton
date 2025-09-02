@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FILTER MEMBER GRUP WA - MAINAN KO TON</title>
+  <title>Filter Data Duplikat</title>
   <style>
     body {
       background-color: #0a1a3f; /* Biru tua */
@@ -50,16 +50,21 @@
     button:hover {
       background: #1473d0;
     }
-    ol {
-      padding-left: 20px;
+    #result {
+      max-height: 300px;
+      overflow-y: auto;
+      background: #0d224d;
+      padding: 10px;
+      border-radius: 8px;
+      white-space: pre-line;
     }
   </style>
 </head>
 <body>
-  <h1>Filter Data Duplikat</h1>
+  <h1>FILTER MEMBER - GRUP WA TIDAK AKTIF</h1>
   <div class="container">
     <div class="column">
-      <h3>- MASUKAN (MEMBER W/L)</h3>
+      <h3>- MASUKAN (MEMBER W/L)<</h3>
       <textarea id="kolom1" placeholder="Masukkan data, satu per baris..."></textarea>
     </div>
     <div class="column">
@@ -68,7 +73,8 @@
     </div>
     <div class="column">
       <h3>- RESULT TIDAK BET</h3>
-      <div id="result" style="max-height: 320px; overflow-y: auto; background:#0d224d; padding:10px; border-radius:8px;"></div>
+      <div id="result">Hasil otomatis muncul di sini...</div>
+      <button onclick="copyResult()">Copy Result</button>
     </div>
   </div>
   <div style="text-align:center; margin-top:20px;">
@@ -80,17 +86,25 @@
       let kolom1 = document.getElementById("kolom1").value.split("\n").map(s => s.trim()).filter(s => s);
       let kolom2 = document.getElementById("kolom2").value.split("\n").map(s => s.trim()).filter(s => s);
 
-      // Ambil data kolom1 yang tidak ada di kolom2
-      let resultData = kolom1.filter(item => !kolom2.includes(item));
+      // Ambil data unik dari gabungan kolom1 dan kolom2 (tanpa duplikat)
+      let combined = [...kolom1, ...kolom2];
+      let resultData = combined.filter((item, index) => combined.indexOf(item) === combined.lastIndexOf(item));
 
-      // Buat tampilan hasil dengan nomor urut
-      let output = "<ol>";
-      resultData.forEach(item => {
-        output += `<li>${item}</li>`;
+      // Gabungkan hasil dengan nomor urut
+      let output = resultData.map((item, index) => `${index + 1}. ${item}`).join("\n");
+
+      document.getElementById("result").textContent = output || "Tidak ada hasil.";
+    }
+
+    function copyResult() {
+      let text = document.getElementById("result").textContent;
+      if (!text || text === "Tidak ada hasil." || text === "Hasil otomatis muncul di sini...") {
+        alert("Belum ada hasil untuk disalin.");
+        return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Hasil berhasil disalin ke clipboard!");
       });
-      output += "</ol>";
-
-      document.getElementById("result").innerHTML = output;
     }
   </script>
 </body>
